@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f52cb72fef91472791019f225007944e" Name="Diagram1">
+        <EntityTypeShape EntityType="AddressBookModel.Contact" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AddressBookModel.ContactInfo" Width="1.5" PointX="3" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AddressBookModel.InfoType" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AddressBookModel.Tag" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AddressBookModel.User" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AddressBookModel.UserContactTag" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
+        <AssociationConnector Association="AddressBookModel.FK_ContactInfo_Contact" ManuallyRouted="false" />
+        <AssociationConnector Association="AddressBookModel.FK_UserContactTag_Contact" ManuallyRouted="false" />
+        <AssociationConnector Association="AddressBookModel.FK_ContactInfo_InfoType" ManuallyRouted="false" />
+        <AssociationConnector Association="AddressBookModel.FK_UserContactTag_Tag" ManuallyRouted="false" />
+        <AssociationConnector Association="AddressBookModel.FK_UserContactTag_User" ManuallyRouted="false" />
+        <AssociationConnector Association="AddressBookModel.ContactUser" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
