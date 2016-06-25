@@ -19,6 +19,7 @@ myApp.controller('UserController', function ($scope, $timeout, UserService) {
                 $scope.user = d.data;
                 $scope.username = '';
                 $scope.password = '';
+                alert('You have successfully logged in!');
             });
         });
     };
@@ -27,6 +28,7 @@ myApp.controller('UserController', function ($scope, $timeout, UserService) {
         UserService.LogOff().then(function (d) {
             UserService.GetLoggedUser().then(function (d) {
                 $scope.user = d.data;
+                alert('You have successfully logged out!');
             });
         });
     };
@@ -45,6 +47,7 @@ myApp.controller('UserController', function ($scope, $timeout, UserService) {
                 $scope.password = '';
                 $scope.passwordConfirm = '';
                 $scope.email = '';
+                alert('You have successfully registered your new username!');
             });
         });
     };
