@@ -1,4 +1,5 @@
 ﻿using AddressBook.App.Models;
+using AddressBook.DAL;
 using AddressBook.DB;
 using Microsoft.AspNet.Identity;
 using System;
@@ -12,6 +13,7 @@ namespace AddressBook.App.Controllers
 {
     public class DataController : Controller
     {
+        ContactRepository contactRepo = new ContactRepository();
         // GET: Data
         public ActionResult Index()
         {
@@ -19,7 +21,7 @@ namespace AddressBook.App.Controllers
         }
 
         [HttpPost]
-        public void Login(LoginViewModel model)
+        public JsonResult Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -32,33 +34,59 @@ namespace AddressBook.App.Controllers
                         FormsAuthentication.SetAuthCookie(model.Username, false);
                         var FormsAuthCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
                         var ExistingTicket = FormsAuthentication.Decrypt(FormsAuthCookie.Value).Name;
+                        return Json(new { success = true });
                     }
                     else
                     {
                         ModelState.AddModelError("", "The user name or password provided is incorrect.");
                     }
                 }
-
             }
+            return Json(new
+            {
+                success = false,
+                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                    .Select(m => m.ErrorMessage).ToArray()
+            });
         }
 
         [HttpPost]
-        public void Register(RegisterViewModel model)
+        public JsonResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 using (AddressBookEntities db = new AddressBookEntities())
                 {
-                    var newUser = db.User.Create();
-                    newUser = new User { Username = model.Username, Password = model.Password, Email = model.Email };
-                    db.User.Add(newUser);
-                    db.SaveChanges();
+                    try
+                    {
+                        var newUser = db.User.Create();
+                        newUser = new User { Username = model.Username, Password = model.Password, Email = model.Email };
+                        db.User.Add(newUser);
+                        db.SaveChanges();
 
-                    FormsAuthentication.SetAuthCookie(model.Username, false);
-                    var FormsAuthCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
-                    var ExistingTicket = FormsAuthentication.Decrypt(FormsAuthCookie.Value).Name;
+                        FormsAuthentication.SetAuthCookie(model.Username, false);
+                        var FormsAuthCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
+                        var ExistingTicket = FormsAuthentication.Decrypt(FormsAuthCookie.Value).Name;
+                        return Json(new { success = true });
+                    }
+                    catch (Exception exc)
+                    {
+                        ModelState.AddModelError("", exc.Message);
+                        return Json(new
+                        {
+                            success = false,
+                            errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                            .Select(m => m.ErrorMessage).ToArray()
+                        });
+                    }
                 }
             }
+            else return Json(new
+            {
+                success = false,
+                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
+                .Select(m => m.ErrorMessage).ToArray()
+            });
         }
 
         [HttpPost]
@@ -71,6 +99,19 @@ namespace AddressBook.App.Controllers
         {
             var user = User.Identity.GetUserName();
             return user;
+        }
+
+        [HttpPost]
+        public void Create(ContactInformation contact)
+        {
+            using(AddressBookEntities db = new AddressBookEntities())
+            {
+                var item = db.Contact.Create();
+                item = contactRepo.SetBasicParams(item, contact);
+                db.Contact.Add(item);
+                db.SaveChanges();
+            }
+            int a = 5;
         }
     }
 }

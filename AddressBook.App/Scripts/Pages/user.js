@@ -1,4 +1,10 @@
-﻿var myApp = angular.module('UserApp', []);
+﻿var root = angular.module('RootApp', ['UserApp', 'ContactApp']);
+
+root.config(['$locationProvider', function ($locationProvider) {
+    $locationProvider.html5Mode(true);
+}]);
+
+var myApp = angular.module('UserApp', ['ngMessages']);
 
 myApp.controller('UserController', function ($scope, $timeout, UserService) {
     $scope.test = function () {
@@ -14,18 +20,21 @@ myApp.controller('UserController', function ($scope, $timeout, UserService) {
             Username: $scope.username,
             Password: $scope.password
         }
-        UserService.Login(User).then(function (d) {
-            UserService.GetLoggedUser().then(function (d) {
-                $scope.user = d.data;
-                $scope.username = '';
-                $scope.password = '';
-                alert('You have successfully logged in!');
-            });
+        UserService.Login(User).success(function (d) {
+            if (d.success === false) alert(d.errors);
+            else {
+                UserService.GetLoggedUser().then(function (d) {
+                    $scope.user = d.data;
+                    $scope.username = '';
+                    $scope.password = '';
+                    alert('You have successfully logged in!');
+                });
+            }
         });
     };
 
     $scope.logOff = function () {
-        UserService.LogOff().then(function (d) {
+        UserService.LogOff().success(function (d) {
             UserService.GetLoggedUser().then(function (d) {
                 $scope.user = d.data;
                 alert('You have successfully logged out!');
@@ -40,15 +49,19 @@ myApp.controller('UserController', function ($scope, $timeout, UserService) {
             ConfirmPassword: $scope.passwordConfirm,
             Email: $scope.email
         }
-        UserService.Register(User).then(function (d) {
-            UserService.GetLoggedUser().then(function (d) {
-                $scope.user = d.data;
-                $scope.username = '';
-                $scope.password = '';
-                $scope.passwordConfirm = '';
-                $scope.email = '';
-                alert('You have successfully registered your new username!');
-            });
+
+        UserService.Register(User).success(function (d) {
+            if (d.success === false) alert(d.errors);
+            else {
+                UserService.GetLoggedUser().then(function (d) {
+                    $scope.user = d.data;
+                    $scope.username = '';
+                    $scope.password = '';
+                    $scope.passwordConfirm = '';
+                    $scope.email = '';
+                    alert('You have successfully registered your new username!');
+                });
+            }
         });
     };
 });
@@ -91,3 +104,4 @@ myApp.factory('UserService', function ($http) {
 
     return UserService;
 });
+

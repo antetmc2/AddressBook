@@ -1,14 +1,14 @@
 ﻿@using Microsoft.AspNet.Identity
 <script src="~/Scripts/Pages/user.js"></script>
 
-<div ng-app="UserApp">
+<div id="UserApp">
     <div ng-controller="UserController">
         <ul class="nav navbar-nav navbar-right" ng-hide="user == ''">
             <li>
                 @*@Html.ActionLink("Hello {{user}}!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })*@
-                <a>Hello {{user}}!</a>
+                <a style="font-weight: bold;">Hello {{user}}!</a>
             </li>
-            <li><a ng-click="logOff()">Log off</a></li>
+            <li><a ng-click="logOff()" style="font-weight: bold;">Log off</a></li>
         </ul>
 
 
@@ -34,7 +34,7 @@
                                         <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" ng-model="password" required>
                                     </div>
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-primary btn-block" ng-click="logIn()">Sign in</button>
+                                        <button type="button" class="btn btn-theme btn-block" ng-click="logIn()">Sign in</button>
                                     </div>
                                 </form>
                             </div>
@@ -69,7 +69,7 @@
                                         <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email address" ng-model="email" required>
                                     </div>
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-primary btn-block" ng-click="register()">Submit</button>
+                                        <button type="button" class="btn btn-theme btn-block" ng-click="register()">Submit</button>
                                     </div>
                                 </form>
                             </div>
