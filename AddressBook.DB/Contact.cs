@@ -18,7 +18,7 @@ namespace AddressBook.DB
         public Contact()
         {
             this.ContactInfo = new HashSet<ContactInfo>();
-            this.UserContactTag = new HashSet<UserContactTag>();
+            this.Tag = new HashSet<Tag>();
             this.User = new HashSet<User>();
         }
     
@@ -32,7 +32,7 @@ namespace AddressBook.DB
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ContactInfo> ContactInfo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserContactTag> UserContactTag { get; set; }
+        public virtual ICollection<Tag> Tag { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User> User { get; set; }
     }

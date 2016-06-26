@@ -17,13 +17,15 @@ namespace AddressBook.DB
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tag()
         {
-            this.UserContactTag = new HashSet<UserContactTag>();
+            this.Contact = new HashSet<Contact>();
         }
     
         public int ID { get; set; }
         public string TagName { get; set; }
+        public int TagOwner { get; set; }
     
+        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserContactTag> UserContactTag { get; set; }
+        public virtual ICollection<Contact> Contact { get; set; }
     }
 }

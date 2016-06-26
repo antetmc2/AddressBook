@@ -97,8 +97,16 @@ namespace AddressBook.App.Controllers
 
         public string CurrentUser()
         {
-            var user = User.Identity.GetUserName();
-            return user;
+            return User.Identity.GetUserName();
+        }
+
+        public int CurrentUserID()
+        {
+            using(var db = new AddressBookEntities())
+            {
+                var user = CurrentUser();
+                return db.User.Where(x => x.Username == user).SingleOrDefault().ID;
+            }
         }
 
         [HttpPost]
@@ -110,8 +118,29 @@ namespace AddressBook.App.Controllers
                 item = contactRepo.SetBasicParams(item, contact);
                 db.Contact.Add(item);
                 db.SaveChanges();
+                if (contact.Numbers != null && contact.Emails != null)
+                {
+                    var numb = contact.Numbers.Distinct();
+                    var emails = contact.Emails.Distinct();
+
+                    try
+                    {
+                        foreach (var no in numb)
+                        {
+                            contactRepo.CreateAddress(item.ID, 1, no.PhoneNumber);
+                        }
+                        foreach (var no in emails)
+                        {
+                            contactRepo.CreateAddress(item.ID, 2, no.EmailAddress);
+                        }
+                        foreach (var tag in contact.Tags)
+                        {
+                            contactRepo.AddTag(item.ID, tag, CurrentUserID());
+                        }
+                    }
+                    catch (NullReferenceException exc) { }
+                }
             }
-            int a = 5;
         }
     }
 }

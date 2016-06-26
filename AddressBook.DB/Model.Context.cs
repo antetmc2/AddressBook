@@ -30,6 +30,5 @@ namespace AddressBook.DB
         public virtual DbSet<InfoType> InfoType { get; set; }
         public virtual DbSet<Tag> Tag { get; set; }
         public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<UserContactTag> UserContactTag { get; set; }
     }
 }

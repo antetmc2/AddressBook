@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="AddressBookModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="AddressBookModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Contact">
           <Key>
             <PropertyRef Name="ID" />
@@ -24,6 +24,14 @@
           <Property Name="IDcontact" Type="int" Nullable="false" />
           <Property Name="IDtype" Type="int" Nullable="false" />
           <Property Name="Info" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ContactTag">
+          <Key>
+            <PropertyRef Name="IDcontact" />
+            <PropertyRef Name="IDtag" />
+          </Key>
+          <Property Name="IDcontact" Type="int" Nullable="false" />
+          <Property Name="IDtag" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ContactUser">
           <Key>
@@ -46,6 +54,7 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TagName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="TagOwner" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -55,16 +64,6 @@
           <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Email" Type="nvarchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="UserContactTag">
-          <Key>
-            <PropertyRef Name="IDuser" />
-            <PropertyRef Name="IDcontact" />
-            <PropertyRef Name="IDtag" />
-          </Key>
-          <Property Name="IDuser" Type="int" Nullable="false" />
-          <Property Name="IDcontact" Type="int" Nullable="false" />
-          <Property Name="IDtag" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_ContactInfo_Contact">
           <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
@@ -114,50 +113,50 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserContactTag_Contact">
-          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
+        <Association Name="FK_Tag_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Tag" Type="Self.Tag" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Contact">
+            <Principal Role="User">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserContactTag">
-              <PropertyRef Name="IDcontact" />
+            <Dependent Role="Tag">
+              <PropertyRef Name="TagOwner" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UserContactTag_Tag">
           <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
+          <End Role="ContactTag" Type="Self.ContactTag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tag">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserContactTag">
+            <Dependent Role="ContactTag">
               <PropertyRef Name="IDtag" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UserContactTag_User">
-          <End Role="User" Type="Self.User" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+          <End Role="ContactTag" Type="Self.ContactTag" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="User">
+            <Principal Role="Contact">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserContactTag">
-              <PropertyRef Name="IDuser" />
+            <Dependent Role="ContactTag">
+              <PropertyRef Name="IDcontact" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="AddressBookModelStoreContainer">
           <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ContactInfo" EntityType="Self.ContactInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ContactTag" EntityType="Self.ContactTag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ContactUser" EntityType="Self.ContactUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InfoType" EntityType="Self.InfoType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserContactTag" EntityType="Self.UserContactTag" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_ContactInfo_Contact" Association="Self.FK_ContactInfo_Contact">
             <End Role="Contact" EntitySet="Contact" />
             <End Role="ContactInfo" EntitySet="ContactInfo" />
@@ -174,20 +173,21 @@
             <End Role="User" EntitySet="User" />
             <End Role="ContactUser" EntitySet="ContactUser" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserContactTag_Contact" Association="Self.FK_UserContactTag_Contact">
-            <End Role="Contact" EntitySet="Contact" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
+          <AssociationSet Name="FK_Tag_User" Association="Self.FK_Tag_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Tag" EntitySet="Tag" />
           </AssociationSet>
           <AssociationSet Name="FK_UserContactTag_Tag" Association="Self.FK_UserContactTag_Tag">
             <End Role="Tag" EntitySet="Tag" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
+            <End Role="ContactTag" EntitySet="ContactTag" />
           </AssociationSet>
           <AssociationSet Name="FK_UserContactTag_User" Association="Self.FK_UserContactTag_User">
-            <End Role="User" EntitySet="User" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="ContactTag" EntitySet="ContactTag" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AddressBookModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -202,7 +202,7 @@
           <Property Name="City" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="OIB" Type="String" MaxLength="11" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="ContactInfo" Relationship="Self.FK_ContactInfo_Contact" FromRole="Contact" ToRole="ContactInfo" />
-          <NavigationProperty Name="UserContactTag" Relationship="Self.FK_UserContactTag_Contact" FromRole="Contact" ToRole="UserContactTag" />
+          <NavigationProperty Name="Tag" Relationship="Self.ContactTag" FromRole="Contact" ToRole="Tag" />
           <NavigationProperty Name="User" Relationship="Self.ContactUser" FromRole="Contact" ToRole="User" />
         </EntityType>
         <EntityType Name="ContactInfo">
@@ -230,7 +230,9 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TagName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="UserContactTag" Relationship="Self.FK_UserContactTag_Tag" FromRole="Tag" ToRole="UserContactTag" />
+          <Property Name="TagOwner" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Tag_User" FromRole="Tag" ToRole="User" />
+          <NavigationProperty Name="Contact" Relationship="Self.ContactTag" FromRole="Tag" ToRole="Contact" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -240,21 +242,8 @@
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="UserContactTag" Relationship="Self.FK_UserContactTag_User" FromRole="User" ToRole="UserContactTag" />
+          <NavigationProperty Name="Tag" Relationship="Self.FK_Tag_User" FromRole="User" ToRole="Tag" />
           <NavigationProperty Name="Contact" Relationship="Self.ContactUser" FromRole="User" ToRole="Contact" />
-        </EntityType>
-        <EntityType Name="UserContactTag">
-          <Key>
-            <PropertyRef Name="IDuser" />
-            <PropertyRef Name="IDcontact" />
-            <PropertyRef Name="IDtag" />
-          </Key>
-          <Property Name="IDuser" Type="Int32" Nullable="false" />
-          <Property Name="IDcontact" Type="Int32" Nullable="false" />
-          <Property Name="IDtag" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Contact" Relationship="Self.FK_UserContactTag_Contact" FromRole="UserContactTag" ToRole="Contact" />
-          <NavigationProperty Name="Tag" Relationship="Self.FK_UserContactTag_Tag" FromRole="UserContactTag" ToRole="Tag" />
-          <NavigationProperty Name="User" Relationship="Self.FK_UserContactTag_User" FromRole="UserContactTag" ToRole="User" />
         </EntityType>
         <Association Name="FK_ContactInfo_Contact">
           <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
@@ -264,18 +253,6 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="ContactInfo">
-              <PropertyRef Name="IDcontact" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserContactTag_Contact">
-          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Contact">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserContactTag">
               <PropertyRef Name="IDcontact" />
             </Dependent>
           </ReferentialConstraint>
@@ -292,29 +269,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserContactTag_Tag">
-          <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tag">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserContactTag">
-              <PropertyRef Name="IDtag" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserContactTag_User">
+        <Association Name="FK_Tag_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
-          <End Role="UserContactTag" Type="Self.UserContactTag" Multiplicity="*" />
+          <End Role="Tag" Type="Self.Tag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserContactTag">
-              <PropertyRef Name="IDuser" />
+            <Dependent Role="Tag">
+              <PropertyRef Name="TagOwner" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <Association Name="ContactTag">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="*" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="*" />
         </Association>
         <Association Name="ContactUser">
           <End Role="Contact" Type="Self.Contact" Multiplicity="*" />
@@ -326,26 +295,21 @@
           <EntitySet Name="InfoType" EntityType="Self.InfoType" />
           <EntitySet Name="Tag" EntityType="Self.Tag" />
           <EntitySet Name="User" EntityType="Self.User" />
-          <EntitySet Name="UserContactTag" EntityType="Self.UserContactTag" />
           <AssociationSet Name="FK_ContactInfo_Contact" Association="Self.FK_ContactInfo_Contact">
             <End Role="Contact" EntitySet="Contact" />
             <End Role="ContactInfo" EntitySet="ContactInfo" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserContactTag_Contact" Association="Self.FK_UserContactTag_Contact">
-            <End Role="Contact" EntitySet="Contact" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
           </AssociationSet>
           <AssociationSet Name="FK_ContactInfo_InfoType" Association="Self.FK_ContactInfo_InfoType">
             <End Role="InfoType" EntitySet="InfoType" />
             <End Role="ContactInfo" EntitySet="ContactInfo" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserContactTag_Tag" Association="Self.FK_UserContactTag_Tag">
-            <End Role="Tag" EntitySet="Tag" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserContactTag_User" Association="Self.FK_UserContactTag_User">
+          <AssociationSet Name="FK_Tag_User" Association="Self.FK_Tag_User">
             <End Role="User" EntitySet="User" />
-            <End Role="UserContactTag" EntitySet="UserContactTag" />
+            <End Role="Tag" EntitySet="Tag" />
+          </AssociationSet>
+          <AssociationSet Name="ContactTag" Association="Self.ContactTag">
+            <End Role="Tag" EntitySet="Tag" />
+            <End Role="Contact" EntitySet="Contact" />
           </AssociationSet>
           <AssociationSet Name="ContactUser" Association="Self.ContactUser">
             <End Role="Contact" EntitySet="Contact" />
@@ -393,6 +357,7 @@
               <MappingFragment StoreEntitySet="Tag">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="TagName" ColumnName="TagName" />
+                <ScalarProperty Name="TagOwner" ColumnName="TagOwner" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -406,15 +371,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserContactTag">
-            <EntityTypeMapping TypeName="AddressBookModel.UserContactTag">
-              <MappingFragment StoreEntitySet="UserContactTag">
-                <ScalarProperty Name="IDuser" ColumnName="IDuser" />
-                <ScalarProperty Name="IDcontact" ColumnName="IDcontact" />
-                <ScalarProperty Name="IDtag" ColumnName="IDtag" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+          <AssociationSetMapping Name="ContactTag" TypeName="AddressBookModel.ContactTag" StoreEntitySet="ContactTag">
+            <EndProperty Name="Tag">
+              <ScalarProperty Name="ID" ColumnName="IDtag" />
+            </EndProperty>
+            <EndProperty Name="Contact">
+              <ScalarProperty Name="ID" ColumnName="IDcontact" />
+            </EndProperty>
+          </AssociationSetMapping>
           <AssociationSetMapping Name="ContactUser" TypeName="AddressBookModel.ContactUser" StoreEntitySet="ContactUser">
             <EndProperty Name="Contact">
               <ScalarProperty Name="ID" ColumnName="IDcontact" />

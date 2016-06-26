@@ -17,7 +17,7 @@ namespace AddressBook.DB
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public User()
         {
-            this.UserContactTag = new HashSet<UserContactTag>();
+            this.Tag = new HashSet<Tag>();
             this.Contact = new HashSet<Contact>();
         }
     
@@ -27,7 +27,7 @@ namespace AddressBook.DB
         public string Email { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserContactTag> UserContactTag { get; set; }
+        public virtual ICollection<Tag> Tag { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Contact> Contact { get; set; }
     }
