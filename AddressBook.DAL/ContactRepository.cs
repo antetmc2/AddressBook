@@ -66,5 +66,39 @@ namespace AddressBook.DAL
                 db.SaveChanges();
             }
         }
+
+        /// <summary>
+        /// Postavljanje kontakta iz klase Kontakt za prikaz podataka (pomoću relacije Contact i svih pripadajućih relacija).
+        /// </summary>
+        /// <param name="item">Klasa pomoću koje se obrađuju podatci koji se onda koriste za prikaz.</param>
+        /// <returns></returns>
+        public ContactInformation Set(Contact item)
+        {
+            ContactInformation k = new ContactInformation();
+
+            k.Numbers = new List<Number>();
+            k.Emails = new List<Email>();
+            k.Tags = new List<string>();
+            k.ID = item.ID;
+            k.FirstName = item.FirstName;
+            k.LastName = item.LastName;
+            k.Address = item.Address;
+            k.City = item.City;
+            k.OIB = item.OIB;
+            foreach (var add in item.ContactInfo)
+            {
+                if (add.IDtype == 1) k.Numbers.Add(new Number { ID = add.ID, PhoneNumber = add.Info });
+                else
+                    k.Emails.Add(new Email { ID = add.ID, EmailAddress = add.Info });
+            }
+            foreach (var tag in item.Tag) k.Tags.Add(tag.TagName);
+
+            k.Emails = k.Emails.OrderBy(x => x.EmailAddress).ToList();
+            k.Numbers = k.Numbers.OrderBy(x => x.PhoneNumber).ToList(); ;
+            k.Tags.Sort();
+
+            return k;
+        }
+
     }
 }

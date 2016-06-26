@@ -1,11 +1,21 @@
 ﻿var app = angular.module('ContactApp', []);
 
 app.controller('ContactController', function ($scope, $timeout, $compile, $location, ContactService) {
+    $scope.Contacts = null;
+
     $scope.test = function () {
         alert('AAAA');
     };
 
     console.log('fgggfg');
+
+    ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+        $scope.Contacts = d.data;
+        $scope.term = '';
+        $scope.SearchCriteria = 1;
+    }, function (error) {
+        alert('Error!');
+    });
 
     $scope.add = function () {
         while (angular.element(document.querySelector('.dodano')).length > 0) {
@@ -82,6 +92,18 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
 
 app.factory('ContactService', function ($http) {
     var ContactService = {};
+
+    ContactService.GetContacts = function (Term, Criteria, Url) {
+        if (Term == '') return $http.get(Url);
+        else {
+            return $http.get(Url, {
+                params: {
+                    term: Term,
+                    criteria: Criteria
+                }
+            });
+        }
+    };
 
     ContactService.Create = function (kont) {
         var response = $http({

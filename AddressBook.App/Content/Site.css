@@ -93,17 +93,21 @@ textarea {
 .panel-title {
     font-size: 18px !important;
     font-weight: bolder;
-    color: #757575;
+    color: #CC6600;
 }
 
 .panel-heading {
-    background-color: #f5f5f5 !important;
-    border-color: #f5f5f5 !important;
+    background-color: #FFFBD0 !important;
+    border-color: #FFFBD0 !important;
 }
 
 .btn-special {
     background-color: white;
     color: #CC6600;
+}
+
+.btn-special:hover {
+    color: #FF9900;
 }
 
 .forma {
@@ -180,4 +184,8 @@ p {
     background-color: #FF9900;
     color: #C13100;
     font-weight: bolder;
+}
+
+form.form-inline {
+    margin-bottom: 15px;
 }

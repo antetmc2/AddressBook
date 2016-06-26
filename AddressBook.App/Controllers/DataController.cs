@@ -15,9 +15,22 @@ namespace AddressBook.App.Controllers
     {
         ContactRepository contactRepo = new ContactRepository();
         // GET: Data
-        public ActionResult Index()
+        public JsonResult Index()
         {
-            return View();
+            List<ContactInformation> kontakti = new List<ContactInformation>();
+            ContactInformation k = new ContactInformation();
+            using (var db = new AddressBookEntities())
+            {
+                var kontakt = db.Contact.OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
+                foreach (var item in kontakt)
+                {
+                    k = new ContactInformation();
+                    k = contactRepo.Set(item);
+                    kontakti.Add(k);
+                }
+            }
+            //var json = JsonConvert.SerializeObject(kontakti);
+            return new JsonResult { Data = kontakti, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
         [HttpPost]
@@ -139,6 +152,57 @@ namespace AddressBook.App.Controllers
                         }
                     }
                     catch (NullReferenceException exc) { }
+                }
+            }
+        }
+
+        /// <summary>
+        /// POST metoda za nadograđivanje osnovnih informacija o kontaktu (ime, prezime, adresa, grad, OIB)
+        /// </summary>
+        /// <param name="contact">Kontakt koji se uređuje</param>
+        [HttpPost]
+        public void Update(ContactInformation contact)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                var item = db.Contact.Find(contact.ID);
+                item = contactRepo.SetBasicParams(item, contact);
+                db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// POST metoda koja ovisno o postojanosti broja / e-maila /taga obavlja radnju uređivanja ili dodavanja broja / e-maila / taga.
+        /// </summary>
+        /// <param name="ID">ID kontakta kojem treba spremiti informaciju</param>
+        /// <param name="IDinfo">ID informacije iz relacije Addresses</param>
+        /// <param name="text">Informacija koju treba spremiti</param>
+        /// <param name="type">Vrsta informacije (u obliku integera slično kao u relaciji)</param>
+        [HttpPost]
+        public void AddUpdateEmailNumber(int ID, int IDinfo, string text, int type)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                var contact = db.Contact.Find(ID);
+
+                if (type == 3)
+                {
+                    contactRepo.AddTag(ID, text, CurrentUserID());
+                    return;
+                }
+
+                var upit = contact.ContactInfo.Where(x => x.ID == IDinfo);
+
+                if (!upit.Any())
+                {
+                    contactRepo.CreateAddress(ID, type, text.Trim());
+                }
+
+                else if (upit.Count() == 1)
+                {
+                    var infoUpd = db.ContactInfo.Find(IDinfo);
+                    infoUpd.Info = text;
+                    db.SaveChanges();
                 }
             }
         }
