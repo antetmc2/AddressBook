@@ -209,6 +209,38 @@ namespace AddressBook.App.Controllers
             }
         }
 
+        /// <summary>
+        /// POST metoda za uklanjanje taga.
+        /// </summary>
+        /// <param name="idUser">ID kontakta kojem treba ukloniti tag</param>
+        /// <param name="chosenTag">Tag koji je potrebno ukloniti</param>
+        [HttpPost]
+        public void RemoveTag(int idUser, string chosenTag)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                var user = CurrentUserID();
+                var tag = contactRepo.GetSingleTagInfo(chosenTag, user);
+                var contact = contactRepo.GetContactInfoFromTag(tag, idUser);
+                tag.Contact.Remove(contact);
+                db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// POST metoda koja uklanja broj ili e-mail prema ID-u informacije (autoinkrement primarnog ključa iz relacije Addresses)
+        /// </summary>
+        /// <param name="id">ID e-maila ili broja</param>
+        [HttpPost]
+        public void RemoveNumberEmail(int id)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                var numb = db.Addresses.Find(id);
+                db.Addresses.Remove(numb);
+                db.SaveChanges();
+            }
+        }
 
         /// <summary>
         /// GET metoda za dohvaćanje informacija o izabranom kontaktu (prozor za uređivanje podataka).
@@ -226,6 +258,21 @@ namespace AddressBook.App.Controllers
             }
 
             return new JsonResult { Data = contact, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        /// <summary>
+        /// POST metoda za brisanje odabranog kontakta.
+        /// </summary>
+        /// <param name="id">ID odabranog kontakta</param>
+        [HttpPost]
+        public void Delete(int id)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                var contact = db.Contact.Find(id);
+                db.Contact.Remove(contact);
+                db.SaveChanges();
+            }
         }
 
     }

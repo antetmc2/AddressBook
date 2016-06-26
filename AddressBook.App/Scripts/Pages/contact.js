@@ -93,6 +93,40 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         })
     };
 
+    $scope.addInfo = function (type, info) {
+        if (type == 1) var pom = $scope.numbers.pop(info);
+        else if (type == 2) var pom = $scope.emails.pop(info);
+        else if (type == 3) var pom = $scope.tags.pop(info);
+        $scope.hgt = 'automatic';
+        ContactService.AddInfo(type, 0, $scope.ID, pom.value).then(function (d) {
+            $timeout(function () {
+                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                    $scope.Contacts = d.data;
+
+                    ContactService.GetContactById($scope.ID).then(function (d) {
+                        var SelectedContact = d.data;
+                        $scope.ID = SelectedContact.ID;
+                        $scope.FirstName = SelectedContact.FirstName;
+                        $scope.LastName = SelectedContact.LastName;
+                        $scope.Address = SelectedContact.Address;
+                        $scope.City = SelectedContact.City;
+                        $scope.OIB = SelectedContact.OIB;
+                        $scope.Numbers = SelectedContact.Numbers;
+                        $scope.Emails = SelectedContact.Emails;
+                        $scope.Tags = SelectedContact.Tags;
+                    }, function (error) {
+                        alert('Error!');
+                    })
+
+                }, function (error) {
+                    alert('Error!');
+                });
+            }, 35);
+        }, function (error) {
+            alert('Error!');
+        });
+    };
+
     $scope.updateInfo = function (type, idinfo, info) {
         ContactService.AddInfo(type, idinfo, $scope.ID, info).then(function (d) {
             $timeout(function () {
@@ -156,6 +190,54 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
                 alert('Error!');
             });
         }, 400);
+    };
+
+
+    $scope.remove = function (type, idtype, info) {
+        var pom = $scope.ID;
+        ContactService.Remove(type, $scope.ID, idtype, info).then(function (d) {
+            $timeout(function () {
+                $scope.hgt = 'automatic';
+                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                    $scope.Contacts = d.data;
+
+                    ContactService.GetContactById(pom).then(function (d) {
+                        var SelectedContact = d.data;
+                        $scope.ID = SelectedContact.ID;
+                        $scope.FirstName = SelectedContact.FirstName;
+                        $scope.LastName = SelectedContact.LastName;
+                        $scope.Address = SelectedContact.Address;
+                        $scope.City = SelectedContact.City;
+                        $scope.OIB = SelectedContact.OIB;
+                        $scope.Numbers = SelectedContact.Numbers;
+                        $scope.Emails = SelectedContact.Emails;
+                        $scope.Tags = SelectedContact.Tags;
+                    }, function (error) {
+                        alert('Error!');
+                    })
+
+                }, function (error) {
+                    alert('Error!');
+                });
+            }, 35);
+        }, function (error) {
+            alert('Error!');
+        });
+    };
+
+    $scope.delete = function (Id) {
+        ContactService.Delete(Id).then(function (d) {
+            $timeout(function () {
+                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                    $scope.Contacts = d.data;
+                }, function (error) {
+                    alert('Error!');
+                })
+            }, 30);
+            alert('Uspješno izbrisano!');
+        }, function (error) {
+            alert('Error!');
+        });
     };
 
     var value = 0;
@@ -223,6 +305,7 @@ app.factory('ContactService', function ($http) {
     };
 
     ContactService.AddInfo = function (type, idinfo, id, info) {
+        console.log('A');
         var response = $http({
             method: "post",
             url: "http://localhost:35949/Data/AddUpdateEmailNumber",
@@ -231,6 +314,34 @@ app.factory('ContactService', function ($http) {
         });
         return response;
     };
+
+    ContactService.Delete = function (Id) {
+        var response = $http({
+            method: "post",
+            url: "http://localhost:35949/Data/Delete",
+            params: { id: Id }
+        });
+        return response;
+    };
+
+    ContactService.Remove = function (type, id, idtype, info) {
+        if (type == 'email' || type == 'number') {
+            var response = $http({
+                method: "post",
+                url: "http://localhost:35949/Data/RemoveNumberEmail",
+                params: { id: idtype }
+            })
+            return response;
+        }
+        else if (type == 'tag') {
+            var response = $http({
+                method: "post",
+                url: "http://localhost:35949/Data/RemoveTag",
+                params: { idUser: id, chosenTag: info }
+            })
+            return response;
+        }
+    }
 
     return ContactService;
 });

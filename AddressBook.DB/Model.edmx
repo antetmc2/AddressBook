@@ -71,7 +71,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ContactInfo_Contact">
-          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ContactInfo" Type="Self.ContactInfo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Contact">
@@ -119,7 +121,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UserContactTag_User">
-          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ContactTag" Type="Self.ContactTag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Contact">
@@ -235,7 +239,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ContactInfo_Contact">
-          <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ContactInfo" Type="Self.ContactInfo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Contact">

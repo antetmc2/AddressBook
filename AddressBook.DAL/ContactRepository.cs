@@ -100,5 +100,32 @@ namespace AddressBook.DAL
             return k;
         }
 
+        /// <summary>
+        /// Metoda za dohvaćanje taga koji se poklapa s unesenim stringom.
+        /// </summary>
+        /// <param name="chosenTag">Tag koji se traži</param>
+        /// <returns>Dohvaćeni tag</returns>
+        public Tag GetSingleTagInfo(string chosenTag, int id)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                return db.Tag.Where(x => x.TagName == chosenTag.Trim().ToLower() && x.TagOwner == id).SingleOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// Dohvati informacije o kontaktu iz dohvaćenog taga.
+        /// </summary>
+        /// <param name="tag">Tag o kojem nas zanimaju informacije.</param>
+        /// <param name="id">Kontakt za kojeg nas zanimaju informacije o tagu.</param>
+        /// <returns>Dohvaćeni kontakt</returns>
+        public Contact GetContactInfoFromTag(Tag tag, int id)
+        {
+            using (var db = new AddressBookEntities())
+            {
+                return tag.Contact.Where(x => x.ID == id).SingleOrDefault();
+            }
+        }
+
     }
 }
