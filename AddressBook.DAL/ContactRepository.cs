@@ -105,12 +105,9 @@ namespace AddressBook.DAL
         /// </summary>
         /// <param name="chosenTag">Tag koji se traži</param>
         /// <returns>Dohvaćeni tag</returns>
-        public Tag GetSingleTagInfo(string chosenTag, int id)
+        public Tag GetSingleTagInfo(string chosenTag, int id, AddressBookEntities db)
         {
-            using (var db = new AddressBookEntities())
-            {
-                return db.Tag.Where(x => x.TagName == chosenTag.Trim().ToLower() && x.TagOwner == id).SingleOrDefault();
-            }
+            return db.Tag.Where(x => x.TagName == chosenTag.Trim().ToLower() && x.TagOwner == id).SingleOrDefault();
         }
 
         /// <summary>
@@ -121,10 +118,7 @@ namespace AddressBook.DAL
         /// <returns>Dohvaćeni kontakt</returns>
         public Contact GetContactInfoFromTag(Tag tag, int id)
         {
-            using (var db = new AddressBookEntities())
-            {
-                return tag.Contact.Where(x => x.ID == id).SingleOrDefault();
-            }
+            return tag.Contact.Where(x => x.ID == id).SingleOrDefault();
         }
 
     }

@@ -220,7 +220,7 @@ namespace AddressBook.App.Controllers
             using (var db = new AddressBookEntities())
             {
                 var user = CurrentUserID();
-                var tag = contactRepo.GetSingleTagInfo(chosenTag, user);
+                var tag = contactRepo.GetSingleTagInfo(chosenTag, user, db);
                 var contact = contactRepo.GetContactInfoFromTag(tag, idUser);
                 tag.Contact.Remove(contact);
                 db.SaveChanges();
@@ -236,8 +236,8 @@ namespace AddressBook.App.Controllers
         {
             using (var db = new AddressBookEntities())
             {
-                var numb = db.Addresses.Find(id);
-                db.Addresses.Remove(numb);
+                var numb = db.ContactInfo.Find(id);
+                db.ContactInfo.Remove(numb);
                 db.SaveChanges();
             }
         }
