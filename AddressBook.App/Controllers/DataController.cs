@@ -206,5 +206,25 @@ namespace AddressBook.App.Controllers
                 }
             }
         }
+
+
+        /// <summary>
+        /// GET metoda za dohvaćanje informacija o izabranom kontaktu (prozor za uređivanje podataka).
+        /// </summary>
+        /// <param name="id">ID kontakta</param>
+        /// <returns>Informacije o kontaktu.</returns>
+        public JsonResult GetContactById(string id)
+        {
+            int idContact = Convert.ToInt32(id);
+            ContactInformation contact = new ContactInformation();
+            using (var db = new AddressBookEntities())
+            {
+                var item = db.Contact.Find(idContact);
+                contact = contactRepo.Set(item);
+            }
+
+            return new JsonResult { Data = contact, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
     }
 }

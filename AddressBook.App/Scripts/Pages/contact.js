@@ -59,14 +59,38 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
 
         ContactService.Create(Kontakt);
 
-        //$timeout(function () {
-        //    $scope.hgt = 'automatic';
-        //    ContactService.GetContacts($scope.term, $scope.SearchCriteria, 'http://localhost:31276/Data/SearchByName').then(function (d) {
-        //        $scope.Contacts = d.data;
-        //    }, function (error) {
-        //        alert('Error!');
-        //    })
-        //}, 400);
+        $timeout(function () {
+            ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                $scope.Contacts = d.data;
+                $scope.term = '';
+                $scope.SearchCriteria = 1;
+            }, function (error) {
+                alert('Error!');
+            });
+        }, 400);
+    };
+
+    $scope.get = function (Id) {
+        while (angular.element(document.querySelector('.dodano')).length > 0) {
+            angular.element(document.querySelector('.dodano')).remove();
+        }
+        ContactService.GetContactById(Id).then(function (d) {
+            var SelectedContact = d.data;
+            $scope.ID = SelectedContact.ID;
+            $scope.FirstName = SelectedContact.FirstName;
+            $scope.LastName = SelectedContact.LastName;
+            $scope.Address = SelectedContact.Address;
+            $scope.City = SelectedContact.City;
+            $scope.OIB = SelectedContact.OIB;
+            $scope.Numbers = SelectedContact.Numbers;
+            $scope.Emails = SelectedContact.Emails;
+            $scope.Tags = SelectedContact.Tags;
+            $scope.numbers = [];
+            $scope.emails = [];
+            $scope.tags = [];
+        }, function (error) {
+            alert('Error!');
+        })
     };
 
     var value = 0;
@@ -103,6 +127,14 @@ app.factory('ContactService', function ($http) {
                 }
             });
         }
+    };
+
+    ContactService.GetContactById = function (Id) {
+        return $http.get('http://localhost:35949/Data/GetContactById', {
+            params: {
+                id: Id
+            }
+        });
     };
 
     ContactService.Create = function (kont) {
