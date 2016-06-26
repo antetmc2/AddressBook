@@ -21,7 +21,8 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var kontakt = db.Contact.OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
+                //var user = CurrentUserID();
+                var kontakt = db.Contact.Where(x => x.IDuser == 1).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
                 foreach (var item in kontakt)
                 {
                     k = new ContactInformation();
@@ -129,6 +130,7 @@ namespace AddressBook.App.Controllers
             {
                 var item = db.Contact.Create();
                 item = contactRepo.SetBasicParams(item, contact);
+                item.IDuser = CurrentUserID();
                 db.Contact.Add(item);
                 db.SaveChanges();
                 if (contact.Numbers != null && contact.Emails != null)

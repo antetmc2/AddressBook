@@ -93,6 +93,71 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         })
     };
 
+    $scope.updateInfo = function (type, idinfo, info) {
+        ContactService.AddInfo(type, idinfo, $scope.ID, info).then(function (d) {
+            $timeout(function () {
+                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                    $scope.Contacts = d.data;
+
+                    ContactService.GetContactById($scope.ID).then(function (d) {
+                        var SelectedContact = d.data;
+                        $scope.ID = SelectedContact.ID;
+                        $scope.FirstName = SelectedContact.FirstName;
+                        $scope.LastName = SelectedContact.LastName;
+                        $scope.Address = SelectedContact.Address;
+                        $scope.City = SelectedContact.City;
+                        $scope.OIB = SelectedContact.OIB;
+                        $scope.Numbers = SelectedContact.Numbers;
+                        $scope.Emails = SelectedContact.Emails;
+                        $scope.Tags = SelectedContact.Tags;
+                    }, function (error) {
+                        alert('Error!');
+                    })
+
+                }, function (error) {
+                    alert('Error!');
+                });
+            }, 35);
+        }, function (error) {
+            alert('Error!');
+        });
+    };
+
+    $scope.save = function (Id) {
+        //angular.forEach($scope.numbers, function (state) {
+        //    if(state.value != '') $scope.Numbers.push(state.value);
+        //});
+        //angular.forEach($scope.emails, function (state) {
+        //    if (state.value != '') $scope.Emails.push(state.value);
+        //});
+        //angular.forEach($scope.tags, function (state) {
+        //    if (state.value != '') $scope.Tags.push(state.value);
+        //});
+        var Kontakt = {
+            ID: $scope.ID,
+            FirstName: $scope.FirstName,
+            LastName: $scope.LastName,
+            Address: $scope.Address,
+            City: $scope.City,
+            OIB: $scope.OIB,
+            Numbers: $scope.Numbers,
+            Emails: $scope.Emails,
+            Tags: $scope.Tags
+        };
+
+        ContactService.Update(Kontakt);
+
+        $timeout(function () {
+            ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                $scope.Contacts = d.data;
+                $scope.term = '';
+                $scope.SearchCriteria = 1;
+            }, function (error) {
+                alert('Error!');
+            });
+        }, 400);
+    };
+
     var value = 0;
     $scope.numbers = [];
     $scope.emails = [];
@@ -143,6 +208,26 @@ app.factory('ContactService', function ($http) {
             url: "http://localhost:35949/Data/Create",
             data: JSON.stringify(kont),
             dataType: "json"
+        });
+        return response;
+    };
+
+    ContactService.Update = function (kont) {
+        var response = $http({
+            method: "post",
+            url: "http://localhost:35949/Data/Update",
+            data: JSON.stringify(kont),
+            dataType: "json"
+        });
+        return response;
+    };
+
+    ContactService.AddInfo = function (type, idinfo, id, info) {
+        var response = $http({
+            method: "post",
+            url: "http://localhost:35949/Data/AddUpdateEmailNumber",
+            params: { ID: id, IDinfo: idinfo, text: info, type: type }
+
         });
         return response;
     };

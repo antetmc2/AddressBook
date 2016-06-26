@@ -54,7 +54,7 @@
                             <p ng-message="pattern">Dopušteni su samo brojevi.</p>
                         </div>
                     </div>
-                    <div class="form-group container">
+                    <div class="form-group container" style="width: 100% !important;">
                         <label for="Ime">Brojevi telefona:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addNum()"></button>
                         <div ng-repeat="n in Numbers" ng-class="{ 'has-error': EditForm.EditNumber{{$index}}.$touched && EditForm.EditNumber{{$index}}.$invalid }">
                             <div class="istiRed" style="width: 90%;"><input type="text" name="EditNumber{{$index}}" class="form-control" placeholder="Unesi broj" ng-model="n.PhoneNumber" ng-maxlength="50" ng-pattern="/^[0-9]*$/"></div>
@@ -75,7 +75,7 @@
                         </div>
 
                     </div>
-                    <div class="form-group container">
+                    <div class="form-group container" style="width: 100% !important;">
                         <label for="Ime">E-mail adrese:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addEmail()"></button>
                         <div ng-repeat="e in Emails" ng-class="{ 'has-error': EditForm.EditEmail{{$index}}.$touched && EditForm.EditEmail{{$index}}.$invalid }">
                             <div class="istiRed" style="width: 90%;"><input type="email" name="EditEmail{{$index}}" class="form-control" placeholder="Unesi e-mail adresu" ng-model="e.EmailAddress" ng-maxlength="50"></div>
@@ -95,7 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group container">
+                    <div class="form-group container" style="width: 100% !important;">
                         <label for="Ime">Tagovi:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addTag()"></button>
                         <span ng-repeat="t in Tags"><span class="tagItem" ng-click="remove('tag', 0, t)">{{t}}</span>  </span>
                         <div id="newTagInput" ng-repeat="input in tags" ng-class="{ 'has-error': EditForm.Tag{{$index}}.$touched && EditForm.Tag{{$index}}.$invalid }">
