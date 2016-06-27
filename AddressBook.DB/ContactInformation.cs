@@ -17,6 +17,12 @@ namespace AddressBook.DB
         public string EmailAddress { get; set; }
     }
 
+    public class Tags
+    {
+        public int? ID { get; set; }
+        public string TagName { get; set; }
+    }
+
     /// <summary>
     /// Posebna klasa kreirana za podatke o kontaktu koja sadrži podatke iz svih drugih relacija i omogućuje lakše baratanje podatcima.
     /// </summary>

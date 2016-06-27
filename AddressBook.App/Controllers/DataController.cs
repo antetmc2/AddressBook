@@ -330,5 +330,41 @@ namespace AddressBook.App.Controllers
             }
         }
 
+        public JsonResult GetUsedTags()
+        {
+            using(var db = new AddressBookEntities())
+            {
+                List<Tags> tagsList = new List<Tags>();
+                var user = CurrentUserID();
+                var tags = db.Tag.Where(x => x.TagOwner == user).OrderBy(x => x.TagName);
+                foreach(var tag in tags)
+                {
+                    if (tag.Contact.Count() > 0) tagsList.Add(new Tags { ID = tag.ID, TagName = tag.TagName });
+                }
+                return new JsonResult { Data = tagsList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+        }
+
+        public JsonResult Filter(int tagID)
+        {
+            List<ContactInformation> contacts = new List<ContactInformation>();
+            ContactInformation k = new ContactInformation();
+
+            using (var db = new AddressBookEntities())
+            {
+                var user = CurrentUserID();
+                var tag = db.Tag.Where(x => x.ID == tagID).SingleOrDefault();
+
+                foreach (var item in tag.Contact)
+                {
+                    k = new ContactInformation();
+                    k = contactRepo.Set(item);
+                    contacts.Add(k);
+                }
+
+                return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
     }
 }

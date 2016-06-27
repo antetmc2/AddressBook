@@ -1,4 +1,4 @@
-﻿var app = angular.module('ContactApp', []);
+﻿var app = angular.module('ContactApp', ['UserApp']);
 
 app.run(function ($rootScope, $location, ContactService) {
     $rootScope.$on('$locationChangeSuccess', function () {
@@ -15,20 +15,34 @@ app.run(function ($rootScope, $location, ContactService) {
 
 app.controller('ContactController', function ($scope, $timeout, $compile, $location, ContactService) {
     $scope.Contacts = null;
-
+    $scope.CurrUser = null;
+    $scope.TagsList = null;
     $scope.test = function () {
         alert('AAAA');
     };
-
-    console.log('fgggfg');
 
     ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
         $scope.Contacts = d.data;
         $scope.term = '';
         $scope.SearchCriteria = 1;
+        $scope.SelectedTag = 0;
     }, function (error) {
         alert('Error!');
     });
+
+    ContactService.GetTags().then(function (d) {
+        console.log(d.data);
+        $scope.TagsList = d.data;
+    }, function (error) {
+        alert('Error!');
+    });
+
+    $scope.$watch(function () { return document.getElementById("loggedUser").innerHTML },
+        function (newVal, oldVal) {
+            $scope.CurrUser = newVal;
+            if ($scope.CurrUser == '') $scope.message = 'Please log in or register to use the application!';
+            else $scope.message = '';
+        });
 
     $scope.search = function () {
         ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
@@ -55,8 +69,20 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
             $scope.Contacts = d.data;
             $scope.term = '';
             $scope.SearchCriteria = 1;
+            $scope.SelectedTag = 0;
             var path = $location.path();
             $location.url(path);
+        }, function (error) {
+            alert('Error!');
+        })
+    };
+
+    $scope.filter = function ()
+    {
+        ContactService.Filter($scope.SelectedTag).then(function (d) {
+            $scope.Contacts = d.data;
+            $scope.term = '';
+            $scope.SearchCriteria = 1;
         }, function (error) {
             alert('Error!');
         })
@@ -306,7 +332,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
     }
 });
 
-app.factory('ContactService', function ($http) {
+app.factory('ContactService', function ($http, UserService) {
     var ContactService = {};
 
     ContactService.GetContacts = function (Term, Criteria, Url) {
@@ -345,6 +371,14 @@ app.factory('ContactService', function ($http) {
             });
         }
         else return $http.get('http://localhost:35949/Data/Index');
+    };
+
+    ContactService.Filter = function (Id) {
+        return $http.get('http://localhost:35949/Data/Filter', {
+            params: {
+                tagID: Id
+            }
+        });
     };
 
     ContactService.GetContactById = function (Id) {
@@ -412,7 +446,11 @@ app.factory('ContactService', function ($http) {
             })
             return response;
         }
-    }
+    };
+
+    ContactService.GetTags = function () {
+        return $http.get('http://localhost:35949/Data/GetUsedTags');
+    };
 
     return ContactService;
 });
