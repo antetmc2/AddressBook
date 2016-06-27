@@ -55,8 +55,8 @@
                         </div>
                     </div>
                     <div class="form-group container" style="width: 100% !important;">
-                        <label for="Ime">Brojevi telefona:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addNum()"></button>
-                        <div ng-repeat="n in Numbers" ng-class="{ 'has-error': EditForm.EditNumber{{$index}}.$touched && EditForm.EditNumber{{$index}}.$invalid }">
+                        <label for="Ime">Brojevi telefona:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addNum()" ng-show="numbers.length + Numbers.length < 6 "></button>
+                        <div ng-repeat="n in Numbers" ng-class="{ 'has-error': EditForm.EditNumber{{$index}}.$touched && EditForm.EditNumber{{$index}}.$invalid}">
                             <div class="istiRed" style="width: 90%;"><input type="text" name="EditNumber{{$index}}" class="form-control" placeholder="Unesi broj" ng-model="n.PhoneNumber" ng-maxlength="50" ng-pattern="/^[0-9]*$/"></div>
                             <div class="istiRed" style="width: 5%;"><button class="btn btn-special glyphicon glyphicon-floppy-disk" type="submit" value="Submit" ng-click="updateInfo(1, n.ID, n.PhoneNumber)"></button></div>
                             <div class="istiRed" style="width: 5%;"><button class="btn btn-special glyphicon glyphicon-remove" type="submit" value="Submit" ng-click="remove('number', n.ID, n.PhoneNumber)" ng-disabled="EditForm['EditNumber' + $index].$invalid"></button></div>
@@ -76,7 +76,7 @@
 
                     </div>
                     <div class="form-group container" style="width: 100% !important;">
-                        <label for="Ime">E-mail adrese:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addEmail()"></button>
+                        <label for="Ime">E-mail adrese:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addEmail()" ng-show="emails.length + Emails.length < 6 "></button>
                         <div ng-repeat="e in Emails" ng-class="{ 'has-error': EditForm.EditEmail{{$index}}.$touched && EditForm.EditEmail{{$index}}.$invalid }">
                             <div class="istiRed" style="width: 90%;"><input type="email" name="EditEmail{{$index}}" class="form-control" placeholder="Unesi e-mail adresu" ng-model="e.EmailAddress" ng-maxlength="50"></div>
                             <div class="istiRed" style="width: 5%;"><button class="btn btn-special glyphicon glyphicon-floppy-disk" type="submit" value="Submit" ng-click="updateInfo(2, e.ID, e.EmailAddress)" ng-disabled="EditForm['EditEmail' + $index].$invalid"></button></div>
