@@ -1,5 +1,18 @@
 ﻿var app = angular.module('ContactApp', []);
 
+app.run(function ($rootScope, $location, ContactService) {
+    $rootScope.$on('$locationChangeSuccess', function () {
+        $rootScope.actualLocation = $location.search();
+    });
+
+    $rootScope.$watch(function () { return $location.search() }, function (newLocation, oldLocation) {
+        if ($rootScope.actualLocation === newLocation) {
+            var scope = angular.element(document.getElementById('glavni')).scope();
+            scope.searchButton();
+        }
+    });
+});
+
 app.controller('ContactController', function ($scope, $timeout, $compile, $location, ContactService) {
     $scope.Contacts = null;
 
@@ -20,20 +33,30 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
     $scope.search = function () {
         ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
             $scope.Contacts = d.data;
-            //var path = $location.path(); //Path without parameters, e.g. /search (without ?q=test)
-            //$location.url(path + '?term=' + $scope.term + '&criteria=' + $scope.SearchCriteria);
+            var path = $location.path(); //Path without parameters, e.g. /search (without ?q=test)
+            $location.url(path + '?term=' + $scope.term + '&criteria=' + $scope.SearchCriteria);
+        }, function (error) {
+            alert('Error!');
+        })
+    };
+
+    $scope.searchButton = function () {
+        var params = $location.search();
+        $scope.term = params.term;
+        ContactService.SearchContacts(params.term, params.criteria).then(function (d) {
+            $scope.Contacts = d.data;
         }, function (error) {
             alert('Error!');
         })
     };
 
     $scope.reset = function () {
-        ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+        ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
             $scope.Contacts = d.data;
             $scope.term = '';
             $scope.SearchCriteria = 1;
-            //var path = $location.path();
-            //$location.url(path);
+            var path = $location.path();
+            $location.url(path);
         }, function (error) {
             alert('Error!');
         })
@@ -307,20 +330,21 @@ app.factory('ContactService', function ($http) {
                 }
             });
         }
-        if (Criteria == 2) {
+        else if (Criteria == 2) {
             return $http.get('http://localhost:35949/Data/SearchByLastName', {
                 params: {
                     term: Term
                 }
             });
         }
-        if (Criteria == 3) {
+        else if (Criteria == 3) {
             return $http.get('http://localhost:35949/Data/SearchByTag', {
                 params: {
                     term: Term
                 }
             });
         }
+        else return $http.get('http://localhost:35949/Data/Index');
     };
 
     ContactService.GetContactById = function (Id) {
