@@ -34,6 +34,23 @@ namespace AddressBook.App.Controllers
             return new JsonResult { Data = kontakti, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
+        public JsonResult SearchByFirstName(string term = "", int criteria = 1)
+        {
+            List<ContactInformation> kontakti = new List<ContactInformation>();
+            ContactInformation k = new ContactInformation();
+            using (var db = new AddressBookEntities())
+            {
+                var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()));
+
+                foreach(var cont in searchResults)
+                {
+                    k = contactRepo.Set(cont);
+                    kontakti.Add(k);
+                }
+            }
+            return new JsonResult { Data = kontakti, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
         [HttpPost]
         public JsonResult Login(LoginViewModel model)
         {

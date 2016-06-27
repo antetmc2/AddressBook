@@ -17,6 +17,28 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         alert('Error!');
     });
 
+    $scope.search = function () {
+        ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
+            $scope.Contacts = d.data;
+            //var path = $location.path(); //Path without parameters, e.g. /search (without ?q=test)
+            //$location.url(path + '?term=' + $scope.term + '&criteria=' + $scope.SearchCriteria);
+        }, function (error) {
+            alert('Error!');
+        })
+    };
+
+    $scope.reset = function () {
+        ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+            $scope.Contacts = d.data;
+            $scope.term = '';
+            $scope.SearchCriteria = 1;
+            //var path = $location.path();
+            //$location.url(path);
+        }, function (error) {
+            alert('Error!');
+        })
+    };
+
     $scope.add = function () {
         while (angular.element(document.querySelector('.dodano')).length > 0) {
             angular.element(document.querySelector('.dodano')).remove();
@@ -268,6 +290,18 @@ app.factory('ContactService', function ($http) {
         if (Term == '') return $http.get(Url);
         else {
             return $http.get(Url, {
+                params: {
+                    term: Term,
+                    criteria: Criteria
+                }
+            });
+        }
+    };
+
+    ContactService.SearchContacts = function (Term, Criteria) {
+        if (Term == '') return $http.get('http://localhost:35949/Data/Index');
+        if (Criteria == 1) {
+            return $http.get('http://localhost:35949/Data/SearchByFirstName', {
                 params: {
                     term: Term,
                     criteria: Criteria
