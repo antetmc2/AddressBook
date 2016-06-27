@@ -1,0 +1,36 @@
+﻿
+@* DETALJI KONTAKATA *@
+
+<div class="modal fade" id="myModalDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{LastName}}, {{FirstName}}</h4>
+            </div>
+            <div class="modal-body">
+                <p class="categoryStyle">Address: <span style="font-weight: normal !important;">{{Address}}, {{City}}</span></p>
+                <hr />
+                <p class="categoryStyle">OIB: <span style="font-weight: normal !important;">{{OIB}}</span></p>
+                <hr />
+                <p class="categoryStyle">Phone Numbers: <span ng-hide="Numbers.length > 0">/</span></p>
+                <div ng-repeat="n in Numbers">
+                    <p>{{n.PhoneNumber}}</p>
+                </div>
+                <hr />
+                <p class="categoryStyle">E-mail addresses: <span ng-hide="Emails.length > 0">/</span></p>
+                <div ng-repeat="e in Emails">
+                    <p>{{e.EmailAddress}}</p>
+                </div>
+                <hr />
+                <p class="categoryStyle">Tags: <span ng-hide="Tags.length > 0">/</span> </p>
+                <span ng-repeat="t in r.Tags">
+                    <span>{{t}}  </span>
+                </span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

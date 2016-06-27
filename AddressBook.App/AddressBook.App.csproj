@@ -1040,6 +1040,7 @@
     <Content Include="Scripts\version.json" />
     <Content Include="Views\Home\AddNewContact.cshtml" />
     <Content Include="Views\Home\EditContact.cshtml" />
+    <Content Include="Views\Home\ContactDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
