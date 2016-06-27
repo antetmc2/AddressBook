@@ -303,8 +303,21 @@ app.factory('ContactService', function ($http) {
         if (Criteria == 1) {
             return $http.get('http://localhost:35949/Data/SearchByFirstName', {
                 params: {
-                    term: Term,
-                    criteria: Criteria
+                    term: Term
+                }
+            });
+        }
+        if (Criteria == 2) {
+            return $http.get('http://localhost:35949/Data/SearchByLastName', {
+                params: {
+                    term: Term
+                }
+            });
+        }
+        if (Criteria == 3) {
+            return $http.get('http://localhost:35949/Data/SearchByTag', {
+                params: {
+                    term: Term
                 }
             });
         }

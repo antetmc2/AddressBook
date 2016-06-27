@@ -17,38 +17,76 @@ namespace AddressBook.App.Controllers
         // GET: Data
         public JsonResult Index()
         {
-            List<ContactInformation> kontakti = new List<ContactInformation>();
+            List<ContactInformation> contacts = new List<ContactInformation>();
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
                 //var user = CurrentUserID();
-                var kontakt = db.Contact.Where(x => x.IDuser == 1).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
-                foreach (var item in kontakt)
+                var contactsFromDB = db.Contact.Where(x => x.IDuser == 1).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
+                foreach (var item in contactsFromDB)
                 {
                     k = new ContactInformation();
                     k = contactRepo.Set(item);
-                    kontakti.Add(k);
+                    contacts.Add(k);
                 }
             }
             //var json = JsonConvert.SerializeObject(kontakti);
-            return new JsonResult { Data = kontakti, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
-        public JsonResult SearchByFirstName(string term = "", int criteria = 1)
+        public JsonResult SearchByFirstName(string term = "")
         {
-            List<ContactInformation> kontakti = new List<ContactInformation>();
+            List<ContactInformation> contacts = new List<ContactInformation>();
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()));
+                var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()) && x.IDuser == 1);
 
                 foreach(var cont in searchResults)
                 {
                     k = contactRepo.Set(cont);
-                    kontakti.Add(k);
+                    contacts.Add(k);
                 }
             }
-            return new JsonResult { Data = kontakti, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        public JsonResult SearchByLastName(string term = "")
+        {
+            List<ContactInformation> contacts = new List<ContactInformation>();
+            ContactInformation k = new ContactInformation();
+            using (var db = new AddressBookEntities())
+            {
+                var searchResults = db.Contact.Where(x => x.LastName.ToLower().Contains(term.ToLower()) && x.IDuser == 1);
+
+                foreach (var cont in searchResults)
+                {
+                    k = contactRepo.Set(cont);
+                    contacts.Add(k);
+                }
+            }
+            return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        public JsonResult SearchByTag(string term = "")
+        {
+            List<ContactInformation> contacts = new List<ContactInformation>();
+            ContactInformation k = new ContactInformation();
+            using (var db = new AddressBookEntities())
+            {
+                var tags = db.Tag.Where(x => x.TagName.ToLower().Contains(term.ToLower()) && x.TagOwner == 1);
+
+                foreach(var tag in tags)
+                {
+                    var searchResults = tag.Contact;
+                    foreach (var cont in searchResults)
+                    {
+                        k = contactRepo.Set(cont);
+                        contacts.Add(k);
+                    }
+                }
+            }
+            return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
         [HttpPost]
