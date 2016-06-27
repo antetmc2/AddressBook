@@ -56,20 +56,46 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
 
     $scope.searchButton = function () {
         var params = $location.search();
-        $scope.term = params.term;
-        ContactService.SearchContacts(params.term, params.criteria).then(function (d) {
-            $scope.Contacts = d.data;
-        }, function (error) {
-            alert('Error!');
-        })
-    };
+        console.log(params);
+        console.log(params.term);
+        if (params.filter != undefined)
+        {
+            ContactService.Filter(params.filter).then(function (d) {
+                $scope.Contacts = d.data;
+            }, function (error) {
+                alert('Error!');
+            })
+        }
 
-    $scope.reset = function () {
-        ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
-            $scope.Contacts = d.data;
+        if (params.term != undefined) {
+            $scope.term = params.term;
+            ContactService.SearchContacts(params.term, params.criteria).then(function (d) {
+                $scope.Contacts = d.data;
+            }, function (error) {
+                alert('Error!');
+            })
+        }
+
+        if (params.filter == undefined && params.term == undefined && params.criteria == undefined) {
             $scope.term = '';
             $scope.SearchCriteria = 1;
             $scope.SelectedTag = 0;
+            ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
+                $scope.Contacts = d.data;
+                var path = $location.path();
+                $location.url(path);
+            }, function (error) {
+                alert('Error!');
+            })
+        }
+    };
+
+    $scope.reset = function () {
+        $scope.term = '';
+        $scope.SearchCriteria = 1;
+        $scope.SelectedTag = 0;
+        ContactService.SearchContacts($scope.term, $scope.SearchCriteria).then(function (d) {
+            $scope.Contacts = d.data;
             var path = $location.path();
             $location.url(path);
         }, function (error) {
@@ -83,6 +109,8 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
             $scope.Contacts = d.data;
             $scope.term = '';
             $scope.SearchCriteria = 1;
+            var path = $location.path(); //Path without parameters, e.g. /search (without ?q=test)
+            $location.url(path + '?filter=' + $scope.SelectedTag);
         }, function (error) {
             alert('Error!');
         })
