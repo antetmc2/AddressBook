@@ -9,9 +9,11 @@
                 <h4 class="modal-title" id="myModalLabel">{{LastName}}, {{FirstName}}</h4>
             </div>
             <div class="modal-body">
-                <p class="categoryStyle">Address: <span style="font-weight: normal !important;">{{Address}}, {{City}}</span></p>
+                <p class="categoryStyle">Address: </p>
+                <span style="font-weight: normal !important;">{{Address}}, {{City}}</span>
                 <hr />
-                <p class="categoryStyle">OIB: <span style="font-weight: normal !important;">{{OIB}}</span></p>
+                <p class="categoryStyle">OIB: </p>
+                <span style="font-weight: normal !important;">{{OIB}}</span>
                 <hr />
                 <p class="categoryStyle">Phone Numbers: <span ng-hide="Numbers.length > 0">/</span></p>
                 <div ng-repeat="n in Numbers">
@@ -24,7 +26,7 @@
                 </div>
                 <hr />
                 <p class="categoryStyle">Tags: <span ng-hide="Tags.length > 0">/</span> </p>
-                <span ng-repeat="t in r.Tags">
+                <span ng-repeat="t in Tags">
                     <span>{{t}}  </span>
                 </span>
             </div>

@@ -10,91 +10,91 @@
             <div class="modal-body">
                 <form name="CreateForm" novalidate>
                     <div class="form-group container" ng-class="{ 'has-error': CreateForm.FirstName.$touched && CreateForm.FirstName.$invalid }">
-                        <label for="Ime">Ime:</label>
-                        <input type="text" name="FirstName" class="form-control" placeholder="Unesi ime" ng-model="FirstName" ng-minlength="3" ng-maxlength="30" required>
+                        <label for="Ime">First Name:</label>
+                        <input type="text" name="FirstName" class="form-control" placeholder="Enter First Name" ng-model="FirstName" ng-minlength="3" ng-maxlength="30" required>
                         <div class="help-block" ng-messages="CreateForm.FirstName.$error" ng-if="CreateForm.FirstName.$touched">
-                            <p ng-message="minlength">Ime je prekratko.</p>
-                            <p ng-message="maxlength">Ime je predugačko.</p>
-                            <p ng-message="required">Potrebno je upisati ime.</p>
+                            <p ng-message="minlength">First name is too short.</p>
+                            <p ng-message="maxlength">First name is too long.</p>
+                            <p ng-message="required">This field is required.</p>
                         </div>
                     </div>
                     <div class="form-group container" ng-class="{ 'has-error': CreateForm.LastName.$touched && CreateForm.LastName.$invalid }">
-                        <label for="Prezime">Prezime:</label>
-                        <input type="text" name="LastName" class="form-control" placeholder="Unesi prezime" ng-model="LastName" ng-minlength="3" ng-maxlength="30" required>
+                        <label for="Prezime">Last Name:</label>
+                        <input type="text" name="LastName" class="form-control" placeholder="Enter Last Name" ng-model="LastName" ng-minlength="3" ng-maxlength="30" required>
                         <div class="help-block" ng-messages="CreateForm.LastName.$error" ng-if="CreateForm.LastName.$touched">
-                            <p ng-message="minlength">Prezime je prekratko.</p>
-                            <p ng-message="maxlength">Prezime je predugačko.</p>
-                            <p ng-message="required">Potrebno je upisati prezime.</p>
+                            <p ng-message="minlength">Last name is too short.</p>
+                            <p ng-message="maxlength">Last name is too long.</p>
+                            <p ng-message="required">This field is required.</p>
                         </div>
                     </div>
                     <div class="form-group container" ng-class="{ 'has-error': CreateForm.Address.$touched && CreateForm.Address.$invalid }">
-                        <label for="Adresa">Adresa:</label>
-                        <input type="text" name="Address" class="form-control" placeholder="Unesi adresu" ng-model="Address" ng-minlength="3" ng-maxlength="30" required>
+                        <label for="Adresa">Address:</label>
+                        <input type="text" name="Address" class="form-control" placeholder="Enter Address" ng-model="Address" ng-minlength="3" ng-maxlength="30" required>
                         <div class="help-block" ng-messages="CreateForm.Address.$error" ng-if="CreateForm.Address.$touched">
-                            <p ng-message="minlength">Adresa je prekratka.</p>
-                            <p ng-message="maxlength">Adresa je predugačka.</p>
-                            <p ng-message="required">Potrebno je upisati adresu.</p>
+                            <p ng-message="minlength">Address is too short.</p>
+                            <p ng-message="maxlength">Address is too long.</p>
+                            <p ng-message="required">This field is required.</p>
                         </div>
                     </div>
                     <div class="form-group container" ng-class="{ 'has-error': CreateForm.City.$touched && CreateForm.City.$invalid }">
-                        <label for="Ime">Grad:</label>
-                        <input type="text" name="City" class="form-control" placeholder="Unesi grad" ng-model="City" ng-minlength="3" ng-maxlength="20" required>
+                        <label for="Ime">City:</label>
+                        <input type="text" name="City" class="form-control" placeholder="Enter City" ng-model="City" ng-minlength="3" ng-maxlength="20" required>
                         <div class="help-block" ng-messages="CreateForm.City.$error" ng-if="CreateForm.City.$touched">
-                            <p ng-message="minlength">Grad je prekratak.</p>
-                            <p ng-message="maxlength">Grad je predugačak.</p>
-                            <p ng-message="required">Potrebno je upisati grad.</p>
+                            <p ng-message="minlength">City is too short.</p>
+                            <p ng-message="maxlength">City is too long.</p>
+                            <p ng-message="required">This field is required.</p>
                         </div>
                     </div>
                     <div class="form-group container" ng-class="{ 'has-error': CreateForm.OIB.$touched && CreateForm.OIB.$invalid }">
                         <label for="Ime">OIB:</label>
-                        <input type="text" name="OIB" class="form-control" placeholder="Unesi OIB" ng-model="OIB" ng-minlength="11" ng-maxlength="11" ng-pattern="/^[0-9]*$/" required>
+                        <input type="text" name="OIB" class="form-control" placeholder="Enter OIB" ng-model="OIB" ng-minlength="11" ng-maxlength="11" ng-pattern="/^[0-9]*$/" required>
                         <div class="help-block" ng-messages="CreateForm.OIB.$error" ng-if="CreateForm.OIB.$touched">
-                            <p ng-message="minlength">OIB se sastoji od 11 brojeva.</p>
-                            <p ng-message="maxlength">OIB se sastoji od 11 brojeva.</p>
-                            <p ng-message="required">Potrebno je upisati OIB.</p>
-                            <p ng-message="pattern">Dopušteni su samo brojevi.</p>
+                            <p ng-message="minlength">OIB consists of 11 numbers.</p>
+                            <p ng-message="maxlength">OIB consists of 11 numbers.</p>
+                            <p ng-message="required">This field is required.</p>
+                            <p ng-message="pattern">Only numbers are allowed.</p>
                         </div>
                     </div>
                     <div class="form-group container">
-                        <label for="Ime">Brojevi telefona:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addNum()"></button>
+                        <label for="Ime">Phone Numbers:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addNum()" ng-show="numbers.length + Numbers.length < 6 "></button>
                         <div ng-repeat="n in Numbers">
-                            <input type="text" class="form-control" placeholder="Unesi broj" ng-model="n.PhoneNumber" ng-maxlength="50">
+                            <input type="text" class="form-control" placeholder="Enter broj" ng-model="n.PhoneNumber" ng-maxlength="50">
                         </div>
                         <div id="newPhoneInput" ng-repeat="input in numbers" ng-class="{ 'has-error': CreateForm.Number{{$index}}.$touched && CreateForm.Number{{$index}}.$invalid }">
-                            <input type="text" name="Number{{$index}}" class="form-control dodano" placeholder="Unesi broj" ng-model="input.value" ng-maxlength="50" ng-pattern="/^[0-9]*$/">
+                            <input type="text" name="Number{{$index}}" class="form-control dodano" placeholder="Enter Phone Number" ng-model="input.value" ng-maxlength="50" ng-pattern="/^[0-9]*$/">
                             <div class="help-block container" ng-messages="CreateForm['Number' + $index].$error" ng-if="CreateForm['Number' + $index].$touched" style="margin-left: -15px;">
-                                <p ng-message="maxlength">Broj je predugačak.</p>
-                                <p ng-message="pattern">Dopušteni su samo brojevi.</p>
+                                <p ng-message="maxlength">Number is too long.</p>
+                                <p ng-message="pattern">Only numbers are allowed.</p>
                             </div>
                         </div>
                     </div>
                     <div class="form-group container">
-                        <label for="Ime">E-mail adrese:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addEmail()"></button>
+                        <label for="Ime">E-mail Addresses:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addEmail()" ng-show="emails.length + Emails.length < 6"></button>
                         <div ng-repeat="e in Emails">
-                            <input type="email" name="Email" class="form-control" placeholder="Unesi e-mail adresu" ng-model="e.EmailAddress" ng-maxlength="50">
+                            <input type="email" name="Email" class="form-control" placeholder="Enter e-mail adresu" ng-model="e.EmailAddress" ng-maxlength="50">
                         </div>
                         <div id="newEmailInput" ng-repeat="input in emails" ng-class="{ 'has-error': CreateForm.Email{{$index}}.$touched && CreateForm.Email{{$index}}.$invalid }">
-                            <input type="email" name="Email{{$index}}" class="form-control dodano" placeholder="Unesi broj" ng-model="input.value" ng-maxlength="50">
+                            <input type="email" name="Email{{$index}}" class="form-control dodano" placeholder="Enter E-Mail Address" ng-model="input.value" ng-maxlength="50">
                             <div class="help-block container" ng-messages="CreateForm['Email' + $index].$error" ng-if="CreateForm['Email' + $index].$touched" style="margin-left: -15px;">
-                                <p ng-message="maxlength">E-mail je predugačak.</p>
-                                <p ng-message="email">Unos mora biti e-mail.</p>
+                                <p ng-message="maxlength">E-mail is too long.</p>
+                                <p ng-message="email">Input must be e-mail.</p>
                             </div>
                         </div>
                     </div>
                     <div class="form-group container">
-                        <label for="Ime">Tagovi:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addTag()"></button>
+                        <label for="Ime">Tags:</label> <button class="btn btn-special glyphicon glyphicon-plus" type="submit" value="Submit" style="margin-bottom: 7px;" ng-click="addTag()"></button>
                         <div id="newTagInput" ng-repeat="input in tags" ng-class="{ 'has-error': CreateForm.Tag{{$index}}.$touched && CreateForm.Tag{{$index}}.$invalid }">
-                            <input type="text" name="Tag{{$index}}" class="form-control dodano" placeholder="Unesi tag" ng-model="input.value" ng-maxlength="20">
+                            <input type="text" name="Tag{{$index}}" class="form-control dodano" placeholder="Enter Tag" ng-model="input.value" ng-maxlength="20">
                             <div class="help-block container" ng-messages="CreateForm['Tag' + $index].$error" ng-if="CreateForm['Tag' + $index].$touched" style="margin-left: -15px;">
-                                <p ng-message="maxlength">Tag je predugačak.</p>
+                                <p ng-message="maxlength">Tag is too long.</p>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="create()" ng-disabled="CreateForm.$invalid">Spremi</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="create()" ng-disabled="CreateForm.$invalid">Save</button>
             </div>
         </div>
     </div>
