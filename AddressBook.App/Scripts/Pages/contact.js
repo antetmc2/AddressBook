@@ -156,17 +156,18 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
             Tags: $scope.Tags
         };
 
-        ContactService.Create(Kontakt);
+        ContactService.Create(Kontakt).then(function () {
+            $timeout(function () {
+                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                    $scope.Contacts = d.data;
+                    $scope.term = '';
+                    $scope.SearchCriteria = 1;
+                }, function (error) {
+                    alert('Error!');
+                });
+            }, 400);
+        });
 
-        $timeout(function () {
-            ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
-                $scope.Contacts = d.data;
-                $scope.term = '';
-                $scope.SearchCriteria = 1;
-            }, function (error) {
-                alert('Error!');
-            });
-        }, 400);
     };
 
     $scope.get = function (Id) {

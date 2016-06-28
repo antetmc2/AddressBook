@@ -106,6 +106,15 @@ myApp.factory('UserService', function ($http) {
         return $http.get('http://localhost:35949/Data/CurrentUser')
     };
 
+    UserService.RandomUser = function (user) {
+        var response = $http({
+            method: "post",
+            url: "http://localhost:35949/Data/RandomUser",
+            dataType: "json"
+        });
+        return response;
+    };
+
     return UserService;
 });
 

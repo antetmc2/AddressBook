@@ -21,8 +21,8 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                //var user = CurrentUserID();
-                var contactsFromDB = db.Contact.Where(x => x.IDuser == 1).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
+                var user = CurrentUserID();
+                var contactsFromDB = db.Contact.Where(x => x.IDuser == user).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
                 foreach (var item in contactsFromDB)
                 {
                     k = new ContactInformation();
@@ -40,7 +40,8 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()) && x.IDuser == 1);
+                var user = CurrentUserID();
+                var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()) && x.IDuser == user);
 
                 foreach(var cont in searchResults)
                 {
@@ -57,7 +58,8 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var searchResults = db.Contact.Where(x => x.LastName.ToLower().Contains(term.ToLower()) && x.IDuser == 1);
+                var user = CurrentUserID();
+                var searchResults = db.Contact.Where(x => x.LastName.ToLower().Contains(term.ToLower()) && x.IDuser == user);
 
                 foreach (var cont in searchResults)
                 {
@@ -74,7 +76,8 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var tags = db.Tag.Where(x => x.TagName.ToLower().Contains(term.ToLower()) && x.TagOwner == 1);
+                var user = CurrentUserID();
+                var tags = db.Tag.Where(x => x.TagName.ToLower().Contains(term.ToLower()) && x.TagOwner == user);
 
                 foreach(var tag in tags)
                 {
