@@ -163,9 +163,7 @@ namespace AddressBook.App.Controllers
 
                 else if (upit.Count() == 1)
                 {
-                    var infoUpd = db.ContactInfo.Find(IDinfo);
-                    infoUpd.Info = text;
-                    db.SaveChanges();
+                    contactRepo.UpdateEmailNumbers(IDinfo, text, db);
                 }
             }
         }

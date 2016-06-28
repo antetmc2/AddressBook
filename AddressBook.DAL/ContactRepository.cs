@@ -46,13 +46,6 @@ namespace AddressBook.DAL
                 }
             }
         }
-
-        /// <summary>
-        /// Metoda za stvaranje i dodavanje broja / e-maila za pojedinog kontakta.
-        /// </summary>
-        /// <param name="ID">ID kontakta kojem je potrebno dodati e-mail / broj.</param>
-        /// <param name="type"></param>
-        /// <param name="info"></param>
         public void CreateAddress(int ID, int type, string info)
         {
             using (var db = new AddressBookEntities())
@@ -67,11 +60,6 @@ namespace AddressBook.DAL
             }
         }
 
-        /// <summary>
-        /// Postavljanje kontakta iz klase Kontakt za prikaz podataka (pomoću relacije Contact i svih pripadajućih relacija).
-        /// </summary>
-        /// <param name="item">Klasa pomoću koje se obrađuju podatci koji se onda koriste za prikaz.</param>
-        /// <returns></returns>
         public ContactInformation Set(Contact item)
         {
             ContactInformation k = new ContactInformation();
@@ -100,25 +88,21 @@ namespace AddressBook.DAL
             return k;
         }
 
-        /// <summary>
-        /// Metoda za dohvaćanje taga koji se poklapa s unesenim stringom.
-        /// </summary>
-        /// <param name="chosenTag">Tag koji se traži</param>
-        /// <returns>Dohvaćeni tag</returns>
         public Tag GetSingleTagInfo(string chosenTag, int id, AddressBookEntities db)
         {
             return db.Tag.Where(x => x.TagName == chosenTag.Trim().ToLower() && x.TagOwner == id).SingleOrDefault();
         }
 
-        /// <summary>
-        /// Dohvati informacije o kontaktu iz dohvaćenog taga.
-        /// </summary>
-        /// <param name="tag">Tag o kojem nas zanimaju informacije.</param>
-        /// <param name="id">Kontakt za kojeg nas zanimaju informacije o tagu.</param>
-        /// <returns>Dohvaćeni kontakt</returns>
         public Contact GetContactInfoFromTag(Tag tag, int id)
         {
             return tag.Contact.Where(x => x.ID == id).SingleOrDefault();
+        }
+
+        public void UpdateEmailNumbers(int IDinfo, string text, AddressBookEntities db)
+        {
+            var infoUpd = db.ContactInfo.Find(IDinfo);
+            infoUpd.Info = text;
+            db.SaveChanges();
         }
 
     }
