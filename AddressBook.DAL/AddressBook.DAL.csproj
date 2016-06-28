@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ContactRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -14,6 +14,7 @@ namespace AddressBook.App.Controllers
     public class DataController : Controller
     {
         ContactRepository contactRepo = new ContactRepository();
+        UserController userController = new UserController();
         // GET: Data
         public JsonResult Index()
         {
@@ -21,7 +22,7 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var contactsFromDB = db.Contact.Where(x => x.IDuser == user).OrderBy(c => c.LastName).ThenBy(c => c.FirstName).ToList();
                 foreach (var item in contactsFromDB)
                 {
@@ -40,7 +41,7 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var searchResults = db.Contact.Where(x => x.FirstName.ToLower().Contains(term.ToLower()) && x.IDuser == user);
 
                 foreach(var cont in searchResults)
@@ -58,7 +59,7 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var searchResults = db.Contact.Where(x => x.LastName.ToLower().Contains(term.ToLower()) && x.IDuser == user);
 
                 foreach (var cont in searchResults)
@@ -76,7 +77,7 @@ namespace AddressBook.App.Controllers
             ContactInformation k = new ContactInformation();
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var tags = db.Tag.Where(x => x.TagName.ToLower().Contains(term.ToLower()) && x.TagOwner == user);
 
                 foreach(var tag in tags)
@@ -92,94 +93,7 @@ namespace AddressBook.App.Controllers
             return new JsonResult { Data = contacts, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
-        [HttpPost]
-        public JsonResult Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                using (AddressBookEntities db = new AddressBookEntities())
-                {
-                    bool userValid = db.User.Any(user => user.Username == model.Username && user.Password == model.Password);
 
-                    if (userValid)
-                    {
-                        FormsAuthentication.SetAuthCookie(model.Username, false);
-                        var FormsAuthCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
-                        var ExistingTicket = FormsAuthentication.Decrypt(FormsAuthCookie.Value).Name;
-                        return Json(new { success = true });
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "The user name or password provided is incorrect.");
-                    }
-                }
-            }
-            return Json(new
-            {
-                success = false,
-                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                    .Select(m => m.ErrorMessage).ToArray()
-            });
-        }
-
-        [HttpPost]
-        public JsonResult Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                using (AddressBookEntities db = new AddressBookEntities())
-                {
-                    try
-                    {
-                        var newUser = db.User.Create();
-                        newUser = new User { Username = model.Username, Password = model.Password, Email = model.Email };
-                        db.User.Add(newUser);
-                        db.SaveChanges();
-
-                        FormsAuthentication.SetAuthCookie(model.Username, false);
-                        var FormsAuthCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
-                        var ExistingTicket = FormsAuthentication.Decrypt(FormsAuthCookie.Value).Name;
-                        return Json(new { success = true });
-                    }
-                    catch (Exception exc)
-                    {
-                        ModelState.AddModelError("", exc.Message);
-                        return Json(new
-                        {
-                            success = false,
-                            errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                            .Select(m => m.ErrorMessage).ToArray()
-                        });
-                    }
-                }
-            }
-            else return Json(new
-            {
-                success = false,
-                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                .Select(m => m.ErrorMessage).ToArray()
-            });
-        }
-
-        [HttpPost]
-        public void LogOff()
-        {
-            FormsAuthentication.SignOut();
-        }
-
-        public string CurrentUser()
-        {
-            return User.Identity.GetUserName();
-        }
-
-        public int CurrentUserID()
-        {
-            using(var db = new AddressBookEntities())
-            {
-                var user = CurrentUser();
-                return db.User.Where(x => x.Username == user).SingleOrDefault().ID;
-            }
-        }
 
         [HttpPost]
         public void Create(ContactInformation contact)
@@ -188,7 +102,7 @@ namespace AddressBook.App.Controllers
             {
                 var item = db.Contact.Create();
                 item = contactRepo.SetBasicParams(item, contact);
-                item.IDuser = CurrentUserID();
+                item.IDuser = userController.CurrentUserID();
                 db.Contact.Add(item);
                 db.SaveChanges();
                 if (contact.Numbers != null && contact.Emails != null)
@@ -208,7 +122,7 @@ namespace AddressBook.App.Controllers
                         }
                         foreach (var tag in contact.Tags)
                         {
-                            contactRepo.AddTag(item.ID, tag, CurrentUserID());
+                            contactRepo.AddTag(item.ID, tag, userController.CurrentUserID());
                         }
                     }
                     catch (NullReferenceException exc) { }
@@ -216,10 +130,6 @@ namespace AddressBook.App.Controllers
             }
         }
 
-        /// <summary>
-        /// POST metoda za nadograđivanje osnovnih informacija o kontaktu (ime, prezime, adresa, grad, OIB)
-        /// </summary>
-        /// <param name="contact">Kontakt koji se uređuje</param>
         [HttpPost]
         public void Update(ContactInformation contact)
         {
@@ -231,13 +141,6 @@ namespace AddressBook.App.Controllers
             }
         }
 
-        /// <summary>
-        /// POST metoda koja ovisno o postojanosti broja / e-maila /taga obavlja radnju uređivanja ili dodavanja broja / e-maila / taga.
-        /// </summary>
-        /// <param name="ID">ID kontakta kojem treba spremiti informaciju</param>
-        /// <param name="IDinfo">ID informacije iz relacije Addresses</param>
-        /// <param name="text">Informacija koju treba spremiti</param>
-        /// <param name="type">Vrsta informacije (u obliku integera slično kao u relaciji)</param>
         [HttpPost]
         public void AddUpdateEmailNumber(int ID, int IDinfo, string text, int type)
         {
@@ -247,7 +150,7 @@ namespace AddressBook.App.Controllers
 
                 if (type == 3)
                 {
-                    contactRepo.AddTag(ID, text, CurrentUserID());
+                    contactRepo.AddTag(ID, text, userController.CurrentUserID());
                     return;
                 }
 
@@ -267,17 +170,12 @@ namespace AddressBook.App.Controllers
             }
         }
 
-        /// <summary>
-        /// POST metoda za uklanjanje taga.
-        /// </summary>
-        /// <param name="idUser">ID kontakta kojem treba ukloniti tag</param>
-        /// <param name="chosenTag">Tag koji je potrebno ukloniti</param>
         [HttpPost]
         public void RemoveTag(int idUser, string chosenTag)
         {
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var tag = contactRepo.GetSingleTagInfo(chosenTag, user, db);
                 var contact = contactRepo.GetContactInfoFromTag(tag, idUser);
                 tag.Contact.Remove(contact);
@@ -285,10 +183,6 @@ namespace AddressBook.App.Controllers
             }
         }
 
-        /// <summary>
-        /// POST metoda koja uklanja broj ili e-mail prema ID-u informacije (autoinkrement primarnog ključa iz relacije Addresses)
-        /// </summary>
-        /// <param name="id">ID e-maila ili broja</param>
         [HttpPost]
         public void RemoveNumberEmail(int id)
         {
@@ -300,11 +194,6 @@ namespace AddressBook.App.Controllers
             }
         }
 
-        /// <summary>
-        /// GET metoda za dohvaćanje informacija o izabranom kontaktu (prozor za uređivanje podataka).
-        /// </summary>
-        /// <param name="id">ID kontakta</param>
-        /// <returns>Informacije o kontaktu.</returns>
         public JsonResult GetContactById(string id)
         {
             int idContact = Convert.ToInt32(id);
@@ -318,10 +207,6 @@ namespace AddressBook.App.Controllers
             return new JsonResult { Data = contact, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
-        /// <summary>
-        /// POST metoda za brisanje odabranog kontakta.
-        /// </summary>
-        /// <param name="id">ID odabranog kontakta</param>
         [HttpPost]
         public void Delete(int id)
         {
@@ -338,7 +223,7 @@ namespace AddressBook.App.Controllers
             using(var db = new AddressBookEntities())
             {
                 List<Tags> tagsList = new List<Tags>();
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var tags = db.Tag.Where(x => x.TagOwner == user).OrderBy(x => x.TagName);
                 foreach(var tag in tags)
                 {
@@ -356,7 +241,7 @@ namespace AddressBook.App.Controllers
 
             using (var db = new AddressBookEntities())
             {
-                var user = CurrentUserID();
+                var user = userController.CurrentUserID();
                 var tag = db.Tag.Where(x => x.ID == tagID).SingleOrDefault();
 
                 foreach (var item in tag.Contact)
