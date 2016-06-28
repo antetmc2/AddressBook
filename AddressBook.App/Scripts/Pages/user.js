@@ -76,7 +76,7 @@ myApp.factory('UserService', function ($http) {
     UserService.Login = function (user) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/User/Login",
+            url: "/Data/Login",
             data: JSON.stringify(user),
             dataType: "json"
         });
@@ -86,7 +86,7 @@ myApp.factory('UserService', function ($http) {
     UserService.Register = function (user) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/User/Register",
+            url: "/Data/Register",
             data: JSON.stringify(user),
             dataType: "json"
         });
@@ -96,14 +96,14 @@ myApp.factory('UserService', function ($http) {
     UserService.LogOff = function (user) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/User/LogOff",
+            url: "/Data/LogOff",
             dataType: "json"
         });
         return response;
     };
 
     UserService.GetLoggedUser = function () {
-        return $http.get('http://localhost:35949/User/CurrentUser')
+        return $http.get('/Data/CurrentUser')
     };
 
     return UserService;

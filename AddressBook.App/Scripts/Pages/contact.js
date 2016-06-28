@@ -21,7 +21,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         alert('AAAA');
     };
 
-    ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+    ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
         $scope.Contacts = d.data;
         $scope.term = '';
         $scope.SearchCriteria = 1;
@@ -31,7 +31,6 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
     });
 
     ContactService.GetTags().then(function (d) {
-        console.log(d.data);
         $scope.TagsList = d.data;
     }, function (error) {
         alert('Error!');
@@ -158,7 +157,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
 
         ContactService.Create(Kontakt).then(function () {
             $timeout(function () {
-                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                     $scope.Contacts = d.data;
                     $scope.term = '';
                     $scope.SearchCriteria = 1;
@@ -166,6 +165,11 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
                     alert('Error!');
                 });
             }, 400);
+            ContactService.GetTags().then(function (d) {
+                $scope.TagsList = d.data;
+            }, function (error) {
+                alert('Error!');
+            });
         });
 
     };
@@ -200,7 +204,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         $scope.hgt = 'automatic';
         ContactService.AddInfo(type, 0, $scope.ID, pom.value).then(function (d) {
             $timeout(function () {
-                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                     $scope.Contacts = d.data;
 
                     ContactService.GetContactById($scope.ID).then(function (d) {
@@ -218,6 +222,12 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
                         alert('Error!');
                     })
 
+                    ContactService.GetTags().then(function (d) {
+                        $scope.TagsList = d.data;
+                    }, function (error) {
+                        alert('Error!');
+                    });
+
                 }, function (error) {
                     alert('Error!');
                 });
@@ -230,7 +240,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
     $scope.updateInfo = function (type, idinfo, info) {
         ContactService.AddInfo(type, idinfo, $scope.ID, info).then(function (d) {
             $timeout(function () {
-                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                     $scope.Contacts = d.data;
 
                     ContactService.GetContactById($scope.ID).then(function (d) {
@@ -282,7 +292,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         ContactService.Update(Kontakt);
 
         $timeout(function () {
-            ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+            ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                 $scope.Contacts = d.data;
                 $scope.term = '';
                 $scope.SearchCriteria = 1;
@@ -298,7 +308,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
         ContactService.Remove(type, $scope.ID, idtype, info).then(function (d) {
             $timeout(function () {
                 $scope.hgt = 'automatic';
-                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                     $scope.Contacts = d.data;
 
                     ContactService.GetContactById(pom).then(function (d) {
@@ -328,7 +338,7 @@ app.controller('ContactController', function ($scope, $timeout, $compile, $locat
     $scope.delete = function (Id) {
         ContactService.Delete(Id).then(function (d) {
             $timeout(function () {
-                ContactService.GetContacts('', 1, 'http://localhost:35949/Data/Index').then(function (d) {
+                ContactService.GetContacts('', 1, '/Data/Index').then(function (d) {
                     $scope.Contacts = d.data;
                 }, function (error) {
                     alert('Error!');
@@ -377,33 +387,33 @@ app.factory('ContactService', function ($http, UserService) {
     };
 
     ContactService.SearchContacts = function (Term, Criteria) {
-        if (Term == '') return $http.get('http://localhost:35949/Data/Index');
+        if (Term == '') return $http.get('/Data/Index');
         if (Criteria == 1) {
-            return $http.get('http://localhost:35949/Data/SearchByFirstName', {
+            return $http.get('/Data/SearchByFirstName', {
                 params: {
                     term: Term
                 }
             });
         }
         else if (Criteria == 2) {
-            return $http.get('http://localhost:35949/Data/SearchByLastName', {
+            return $http.get('/Data/SearchByLastName', {
                 params: {
                     term: Term
                 }
             });
         }
         else if (Criteria == 3) {
-            return $http.get('http://localhost:35949/Data/SearchByTag', {
+            return $http.get('/Data/SearchByTag', {
                 params: {
                     term: Term
                 }
             });
         }
-        else return $http.get('http://localhost:35949/Data/Index');
+        else return $http.get('/Data/Index');
     };
 
     ContactService.Filter = function (Id) {
-        return $http.get('http://localhost:35949/Data/Filter', {
+        return $http.get('/Data/Filter', {
             params: {
                 tagID: Id
             }
@@ -411,7 +421,7 @@ app.factory('ContactService', function ($http, UserService) {
     };
 
     ContactService.GetContactById = function (Id) {
-        return $http.get('http://localhost:35949/Data/GetContactById', {
+        return $http.get('/Data/GetContactById', {
             params: {
                 id: Id
             }
@@ -421,7 +431,7 @@ app.factory('ContactService', function ($http, UserService) {
     ContactService.Create = function (kont) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/Data/Create",
+            url: "/Data/Create",
             data: JSON.stringify(kont),
             dataType: "json"
         });
@@ -431,7 +441,7 @@ app.factory('ContactService', function ($http, UserService) {
     ContactService.Update = function (kont) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/Data/Update",
+            url: "/Data/Update",
             data: JSON.stringify(kont),
             dataType: "json"
         });
@@ -442,7 +452,7 @@ app.factory('ContactService', function ($http, UserService) {
         console.log('A');
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/Data/AddUpdateEmailNumber",
+            url: "/Data/AddUpdateEmailNumber",
             params: { ID: id, IDinfo: idinfo, text: info, type: type }
 
         });
@@ -452,7 +462,7 @@ app.factory('ContactService', function ($http, UserService) {
     ContactService.Delete = function (Id) {
         var response = $http({
             method: "post",
-            url: "http://localhost:35949/Data/Delete",
+            url: "/Data/Delete",
             params: { id: Id }
         });
         return response;
@@ -462,7 +472,7 @@ app.factory('ContactService', function ($http, UserService) {
         if (type == 'email' || type == 'number') {
             var response = $http({
                 method: "post",
-                url: "http://localhost:35949/Data/RemoveNumberEmail",
+                url: "/Data/RemoveNumberEmail",
                 params: { id: idtype }
             })
             return response;
@@ -470,7 +480,7 @@ app.factory('ContactService', function ($http, UserService) {
         else if (type == 'tag') {
             var response = $http({
                 method: "post",
-                url: "http://localhost:35949/Data/RemoveTag",
+                url: "/Data/RemoveTag",
                 params: { idUser: id, chosenTag: info }
             })
             return response;
@@ -478,7 +488,7 @@ app.factory('ContactService', function ($http, UserService) {
     };
 
     ContactService.GetTags = function () {
-        return $http.get('http://localhost:35949/Data/GetUsedTags');
+        return $http.get('/Data/GetUsedTags');
     };
 
     return ContactService;
